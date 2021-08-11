@@ -2,6 +2,23 @@ import {IInputs, IOutputs} from "./generated/ManifestTypes";
 
 export class AdvancedAccountSearch implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
+	private localNotifyOutputChanged: () => void;
+	/**
+	 * HTML Elements
+	 */
+	private context: ComponentFramework.Context<IInputs>;
+	private container: HTMLDivElement;
+	private label: HTMLLabelElement;
+	private buttonContainer: HTMLDivElement;
+	private button: HTMLButtonElement;
+	private inputElement: HTMLInputElement;
+	private datalistElement: HTMLDataListElement;
+
+	/**
+	 * Private Variables
+	 */
+	private id: string;
+
 	/**
 	 * Empty constructor.
 	 */
@@ -21,6 +38,59 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void
 	{
 		// Add control initialization code
+		this.localNotifyOutputChanged = notifyOutputChanged;
+		this.context = context;
+
+		// @ts-ignore
+		this.id = context.parameters.value.attributes?.LogicalName;
+
+		this.container = document.createElement("div");
+		this.container.className = "ms-SearchBox";
+		this.container.setAttribute("style", "width:100%");
+
+		this.label = document.createElement("label");
+		this.label.className = "ms-SearchBox-label";
+		this.label.innerHTML = "<i class='ms-SearchBox-icon ms-Icon ms-Icon--Search'></i>";
+
+		this.buttonContainer = document.createElement("div");
+        this.buttonContainer.className = "ms-CommandButton ms-SearchBox-clear ms-CommandButton--noLabel"
+        this.buttonContainer.setAttribute("style", "display:block");
+
+		this.button = document.createElement("button");
+        this.button.className = "ms-CommandButton-button"
+        this.button.innerHTML = '<span class="ms-CommandButton-icon"><i class="ms-Icon ms-Icon--Clear"></i></span><span class="ms-CommandButton-label"></span> ';
+		this.button.addEventListener("click", this.clearFields.bind(this));
+
+		this.inputElement = document.createElement("input");
+        this.inputElement.name = "autocomplete_" + this.id
+        this.inputElement.placeholder = "Search Companies Database...";
+        this.inputElement.autocomplete = "off";
+        this.inputElement.className = "ms-SearchBox-field"
+        this.inputElement.setAttribute("list", "list_" + this.id);
+        this.inputElement.setAttribute("style", "width:100%");
+		// Get initial values from field.
+        // @ts-ignore
+        this.inputElement.value = this.context.parameters.value.formatted;
+
+        // Add an eventlistner the element and bind it to a  function.
+        this.inputElement.addEventListener("input", this.getSuggestions.bind(this));
+
+		// creating HTML elements for data list 
+        this.datalistElement = document.createElement("datalist");
+        this.datalistElement.id = "list_" + this.id;
+
+        var optionsHTML = "";
+
+        //@ts-ignore 
+        this.datalistElement.innerHTML = optionsHTML;
+
+		this.buttonContainer.appendChild(this.button);
+		this.container.appendChild(this.label);
+		this.container.appendChild(this.buttonContainer);
+		this.container.appendChild(this.inputElement);
+
+		this.container.appendChild(this.datalistElement);
+		container.appendChild(this.container);
 	}
 
 
@@ -50,4 +120,68 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	{
 		// Add code to cleanup control if necessary
 	}
+
+	public clearFields(evt: Event) {
+        console.log("Clear Fields")
+
+        // this._companyName = ""
+        // this._nzbnNumber = ""
+        // this._companyName = ""
+        // this._tradingAs = ""
+        // this._statusCode = ""
+        // this._statusReason = ""
+        // // this._registrationDate = None
+        // this._bicCode = ""
+        this.localNotifyOutputChanged();
+    }
+
+	public getSuggestions(evt: Event) {
+
+        // Connect to an API and get the suggesstion as user key presses and update dropdown.
+        let input = (this.inputElement.value as any) as string;
+        if (input.length > 0) {
+			this.datalistElement.innerHTML = "";
+        //     let query = "entities?search-term=" + encodeURIComponent(input) + "&page-size=20";
+        //     let options = {
+        //         host: 'api.business.govt.nz/services/v4/nzbn/',
+        //         path: query,
+        //         headers: {
+        //             'accept': 'application/json',
+        //             'authorization': "Bearer " + this._nzbnToken
+        //         }
+        //     }
+        //     const https = require('https');
+
+        //     https.get(options, (resp: any) => {
+        //         let data = '';
+        //         // A chunk of data has been recieved.
+        //         resp.on('data', (chunk: any) => {
+        //             data += chunk;
+        //         });
+        //         // The whole response has been received. Print out the result.
+        //         resp.on('end', () => {
+        //             var response = JSON.parse(data);
+        //             console.log(response);
+        //             var optionsHTML = "";
+        //             var optionsHTMLArray = new Array();
+        //             for (var i = 0; i < response.items.length; i++) {
+        //                 // Build the values for the AutoComplete Array and Add ID for after select use.
+        //                 var lastTradingName = ((response.items[i].tradingNames.length > 0) ? this.titleCase(response.items[i].tradingNames[0].name) : this.titleCase(response.items[i].entityName));
+
+        //                 optionsHTMLArray.push('<option value="');
+        //                 optionsHTMLArray.push(this.titleCase(response.items[i].entityName) + ". NZBN: " + response.items[i].nzbn);
+        //                 optionsHTMLArray.push('">  Status: ' + response.items[i].entityStatusDescription + ', T/A: ' + lastTradingName + '</option>');
+        //             }
+        //             this.datalistElement.innerHTML = optionsHTMLArray.join("");
+        //             this.localNotifyOutputChanged
+        //         });
+
+        //     }).on("error", (err: { message: string; }) => {
+        //         console.log("Error: " + err.message);
+        //     });
+        }
+        // else {
+        //     this.getDetails(this.inputElement.value)
+        // }
+    }
 }
