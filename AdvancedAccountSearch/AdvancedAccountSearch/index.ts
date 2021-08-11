@@ -58,22 +58,23 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 
 		this.button = document.createElement("button");
         this.button.className = "ms-CommandButton-button"
-        this.button.innerHTML = '<span class="ms-CommandButton-icon"><i class="ms-Icon ms-Icon--Clear"></i></span><span class="ms-CommandButton-label"></span> ';
-		this.button.addEventListener("click", this.clearFields.bind(this));
+        this.button.innerHTML = '<span class="ms-CommandButton-icon"><i class="ms-Icon ms-Icon--Search"></i></span><span class="ms-CommandButton-label"></span> ';
+		this.button.addEventListener("click", this.onSearchPress.bind(this));
 
 		this.inputElement = document.createElement("input");
         this.inputElement.name = "autocomplete_" + this.id
-        this.inputElement.placeholder = "Search Companies Database...";
+        this.inputElement.placeholder = "Search using Account Number...";
         this.inputElement.autocomplete = "off";
         this.inputElement.className = "ms-SearchBox-field"
         this.inputElement.setAttribute("list", "list_" + this.id);
         this.inputElement.setAttribute("style", "width:100%");
+		this.inputElement.setAttribute("data-list-focus","true");
 		// Get initial values from field.
         // @ts-ignore
         this.inputElement.value = this.context.parameters.value.formatted;
 
         // Add an eventlistner the element and bind it to a  function.
-        this.inputElement.addEventListener("input", this.getSuggestions.bind(this));
+        this.inputElement.addEventListener("keydown", this.hadleKeyEvents.bind(this));
 
 		// creating HTML elements for data list 
         this.datalistElement = document.createElement("datalist");
@@ -83,6 +84,7 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 
         //@ts-ignore 
         this.datalistElement.innerHTML = optionsHTML;
+		
 
 		this.buttonContainer.appendChild(this.button);
 		this.container.appendChild(this.label);
@@ -121,26 +123,19 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 		// Add code to cleanup control if necessary
 	}
 
-	public clearFields(evt: Event) {
+	public onSearchPress(evt: Event) {
         console.log("Clear Fields")
 
-        // this._companyName = ""
-        // this._nzbnNumber = ""
-        // this._companyName = ""
-        // this._tradingAs = ""
-        // this._statusCode = ""
-        // this._statusReason = ""
-        // // this._registrationDate = None
-        // this._bicCode = ""
-        this.localNotifyOutputChanged();
+        this.searchForData();
+        //this.localNotifyOutputChanged();
     }
 
-	public getSuggestions(evt: Event) {
+	public hadleKeyEvents(evt: KeyboardEvent) {
 
-        // Connect to an API and get the suggesstion as user key presses and update dropdown.
-        let input = (this.inputElement.value as any) as string;
-        if (input.length > 0) {
-			this.datalistElement.innerHTML = "";
+        // Connect to an API and get the suggesstion as user key presses and update dropdown.		
+        //
+        if (evt.key === "Enter") {
+			this.searchForData();
         //     let query = "entities?search-term=" + encodeURIComponent(input) + "&page-size=20";
         //     let options = {
         //         host: 'api.business.govt.nz/services/v4/nzbn/',
@@ -184,4 +179,41 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
         //     this.getDetails(this.inputElement.value)
         // }
     }
+
+	public searchForData() {
+		//this.datalistElement.innerHTML = "";
+		let input = (this.inputElement.value as any) as string;
+		if(input.length > 0) {
+			//alert(input);
+
+			var optionsHTML = "";
+			var optionsHTMLArray = new Array();
+			// for (var i = 0; i < response.items.length; i++) {
+			// 	// Build the values for the AutoComplete Array and Add ID for after select use.
+			// 	var lastTradingName = ((response.items[i].tradingNames.length > 0) ? this.titleCase(response.items[i].tradingNames[0].name) : this.titleCase(response.items[i].entityName));
+			let strText = "ONE";
+			let option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			//alert(option);
+			optionsHTMLArray.push(option);
+
+			strText = "TWO";
+			option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			//alert(option);
+			optionsHTMLArray.push(option);
+
+			strText = "THREE";
+			option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			//alert(option);
+			optionsHTMLArray.push(option);
+
+			strText = "FOUR";
+			option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			//alert(option);
+			optionsHTMLArray.push(option);
+			//}
+			//alert(optionsHTMLArray.join(""));
+			this.datalistElement.innerHTML = optionsHTMLArray.join("");
+			this.localNotifyOutputChanged
+		}
+	}
 }
