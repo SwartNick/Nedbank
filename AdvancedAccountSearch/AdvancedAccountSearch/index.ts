@@ -1,4 +1,6 @@
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
+import * as $ from "jquery";
+import * as Bootstrap from "bootstrap";
 
 export class AdvancedAccountSearch implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
@@ -18,6 +20,7 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	 * Private Variables
 	 */
 	private id: string;
+	private _value: string;
 
 	/**
 	 * Empty constructor.
@@ -62,13 +65,15 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 		this.button.addEventListener("click", this.onSearchPress.bind(this));
 
 		this.inputElement = document.createElement("input");
-        this.inputElement.name = "autocomplete_" + this.id
-        this.inputElement.placeholder = "Search using Account Number...";
+		this.inputElement.id = "input_data";
+        this.inputElement.name = "autocomplete_data";
+        this.inputElement.placeholder = "Search using text...";
         this.inputElement.autocomplete = "off";
         this.inputElement.className = "ms-SearchBox-field"
-        this.inputElement.setAttribute("list", "list_" + this.id);
+        this.inputElement.setAttribute("list", "list_data");
         this.inputElement.setAttribute("style", "width:100%");
 		this.inputElement.setAttribute("data-list-focus","true");
+		//this.inputElement.addEventListener("change", this.onSelect.bind(this));
 		// Get initial values from field.
         // @ts-ignore
         this.inputElement.value = this.context.parameters.value.formatted;
@@ -78,7 +83,8 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 
 		// creating HTML elements for data list 
         this.datalistElement = document.createElement("datalist");
-        this.datalistElement.id = "list_" + this.id;
+		this.datalistElement.addEventListener("selectionchange", this.onSelect.bind(this));
+        this.datalistElement.id = "list_data";
 
         var optionsHTML = "";
 
@@ -111,7 +117,11 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	 */
 	public getOutputs(): IOutputs
 	{
-		return {};
+		//alert(this._value);
+		const result: IOutputs = {
+			value: this._value
+		};
+		return result;
 	}
 
 	/**
@@ -126,8 +136,26 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	public onSearchPress(evt: Event) {
         console.log("Clear Fields")
 
-        this.searchForData();
+        //this.searchForData();
         //this.localNotifyOutputChanged();
+		var value = $('#input_data').val();
+        //alert($('#list_data [value="' + value + '"]').data('value'));
+
+		//this.getOutputs().value. = value;
+		//@ts-ignore 
+		this._value = $('#list_data [value="' + value + '"]').data('value') as string;
+		this.localNotifyOutputChanged();
+    }
+
+	public onSelect(evt: Event) {
+        //alert("HELLO");
+		var value = $('#input_data').val();
+		//alert(value);
+
+        alert($('#list_data [value="' + value + '"]').data('value'));
+		//@ts-ignore 
+		this._value = $('#list_data [value="' + value + '"]').data('value') as string;
+        this.localNotifyOutputChanged();
     }
 
 	public hadleKeyEvents(evt: KeyboardEvent) {
@@ -192,28 +220,27 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 			// 	// Build the values for the AutoComplete Array and Add ID for after select use.
 			// 	var lastTradingName = ((response.items[i].tradingNames.length > 0) ? this.titleCase(response.items[i].tradingNames[0].name) : this.titleCase(response.items[i].entityName));
 			let strText = "ONE";
-			let option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			let option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
 			//alert(option);
 			optionsHTMLArray.push(option);
 
 			strText = "TWO";
-			option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
 			//alert(option);
 			optionsHTMLArray.push(option);
 
 			strText = "THREE";
-			option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
 			//alert(option);
 			optionsHTMLArray.push(option);
 
 			strText = "FOUR";
-			option = '<option value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
 			//alert(option);
 			optionsHTMLArray.push(option);
 			//}
 			//alert(optionsHTMLArray.join(""));
-			this.datalistElement.innerHTML = optionsHTMLArray.join("");
-			this.localNotifyOutputChanged
+			this.datalistElement.innerHTML = optionsHTMLArray.join("");			
 		}
 	}
 }
