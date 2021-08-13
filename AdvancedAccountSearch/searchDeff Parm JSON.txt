@@ -1,7 +1,41 @@
-{ 
-    "data": 
-    [ 
-        { "entity": "contact", "idfield": "contactid", "entityvaluename": "fullname", "resultdisplay": "Ind Cust", "searchfield": "emailaddress1", "displayfields": [ "fullname" ] },
-        { "entity": "account", "idfield": "accountid", "entityvaluename": "name", "resultdisplay": "Bus Cust", "searchfield": "accountnumber", "displayfields": [ "name" ] } 
-    ] 
+{
+    "data":
+    [
+        { 
+            "e": "contact", 
+            "id": "contactid", 
+            "evn": "fullname", 
+            "rd": "Ind Cust", 
+            "sf": "emailaddress1", 
+            "df": 
+            [ 
+                {
+                    "f":"fullname", 
+                    "r":"fullname" 
+                }
+            ] 
+        },
+        { 
+            "e": "account", 
+            "id": "accountid", 
+            "evn": "name", 
+            "rd": "Bus Cust", 
+            "sf": "accountnumber", 
+            "df": 
+            [ 
+                { 
+                    "f":"name" 
+                }
+            ]
+        }
+    ]
 }
+
+e 	=	entity
+id 	=	idfield
+evn	=	entityvaluename
+rd 	=	resultdisplay
+sf	=	searchfield
+df	=	displayfields
+f	=	fetchfield
+r 	=	resultfield

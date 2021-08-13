@@ -179,51 +179,7 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 				await this.seachCRM(input,data);
 			}
 
-			this.datalistElement.innerHTML = this._optionsHTMLArray.join("");
-			// let fetchXML = "<fetch top='20' ><entity name='contact' ><attribute name='contactid' /><attribute name='fullname' /><attribute name='emailaddress1' /><filter><condition attribute='emailaddress1' operator='like' value='" + input + "%' /></filter></entity></fetch>";
-			// //let test = 'hello'
-			// this.context.webAPI.retrieveMultipleRecords("contact","?fetchXml=" + fetchXML).then(
-			// 	(response: ComponentFramework.WebApi.RetrieveMultipleResponse) => {
-			// 		debugger;
-			// 		for(let iIndex = 0; iIndex < response.entities.length; iIndex++){
-			// 			let contact = response.entities[iIndex];
-
-			// 			let option = '<option data-value="' + contact.contactid +'|contact|' + contact.fullname + '" value="' + contact.fullname + '">' + contact.emailaddress1 + ' Contact: ' + contact.fullname + '</option>'
-			// 			optionsHTMLArray.push(option);
-			// 		}
-
-			// 		this.datalistElement.innerHTML = optionsHTMLArray.join("");
-			// 	},
-			// 	(errorResponse) => {
-			// 		debugger;
-			// 		alert(errorResponse);
-			// 	}
-			// );
-			// for (var i = 0; i < response.items.length; i++) {
-			// 	// Build the values for the AutoComplete Array and Add ID for after select use.
-			// 	var lastTradingName = ((response.items[i].tradingNames.length > 0) ? this.titleCase(response.items[i].tradingNames[0].name) : this.titleCase(response.items[i].entityName));
-			/* let strText = "ONE";
-			let option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
-			//alert(option);
-			optionsHTMLArray.push(option);
-
-			strText = "TWO";
-			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
-			//alert(option);
-			optionsHTMLArray.push(option);
-
-			strText = "THREE";
-			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
-			//alert(option);
-			optionsHTMLArray.push(option);
-
-			strText = "FOUR";
-			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>' */
-			//alert(option);
-			//optionsHTMLArray.push(option);
-			//}
-			//alert(optionsHTMLArray.join(""));
-						
+			this.datalistElement.innerHTML = this._optionsHTMLArray.join("");			
 		}
 	} // public searchForData()
 
@@ -231,24 +187,25 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 		
 		let entityDetails = JSON.parse(entity);
 
-		let fetchXML = "<fetch top='20' ><entity name='" + entityDetails.entity + "' ><attribute name='" + entityDetails.idfield + "' /><attribute name='" + entityDetails.searchfield + "' />";
-		for(let iIndex = 0; iIndex < entityDetails.displayfields.length; iIndex++) {
-			fetchXML += "<attribute name='" + entityDetails.displayfields[iIndex] + "' />";
+		let fetchXML = "<fetch top='20' ><entity name='" + entityDetails.e + "' ><attribute name='" + entityDetails.id + "' /><attribute name='" + entityDetails.sf + "' />";
+		for(let iIndex = 0; iIndex < entityDetails.df.length; iIndex++) {
+			fetchXML += "<attribute name='" + entityDetails.df[iIndex].f + "' />";
 		}
-		fetchXML += "<filter><condition attribute='" + entityDetails.searchfield + "' operator='like' value='" + input + "%' /></filter></entity></fetch>";
+		fetchXML += "<filter><condition attribute='" + entityDetails.sf + "' operator='like' value='" + input + "%' /></filter></entity></fetch>";
 
 		//let test = 'hello'
-		await this.context.webAPI.retrieveMultipleRecords(entityDetails.entity,"?fetchXml=" + fetchXML).then(
+		await this.context.webAPI.retrieveMultipleRecords(entityDetails.e,"?fetchXml=" + fetchXML).then(
 			(response: ComponentFramework.WebApi.RetrieveMultipleResponse) => {
 				debugger;
 				for(let iIndex = 0; iIndex < response.entities.length; iIndex++){
 					let data = response.entities[iIndex];
 
-					let option = '<option data-value="' + data[entityDetails.idfield] +'|' + entityDetails.entity + '|' + data[entityDetails.entityvaluename] + '" value="' + data[entityDetails.searchfield] + '">';
+					let option = '<option data-value="' + data[entityDetails.id] +'|' + entityDetails.e + '|' + data[entityDetails.evn] + '" value="' + data[entityDetails.sf] + '">';
 
-					option += entityDetails.resultdisplay + " : " + data[entityDetails.entityvaluename];
-					for(let iIndex = 0; iIndex < entityDetails.displayfields.length; iIndex++) {
-						option += ', ' + data[entityDetails.displayfields[iIndex]];						
+					option += "<B>" + entityDetails.rd + "</B> : <U>" + data[entityDetails.evn] + "</U>";
+					for(let iIndex = 0; iIndex < entityDetails.df.length; iIndex++) {
+						let field = (entityDetails.df[iIndex].r === undefined) ? entityDetails.df[iIndex].f : entityDetails.df[iIndex].r;
+						option += ', ' + data[field];						
 					}
 					option += '</option>';
 
