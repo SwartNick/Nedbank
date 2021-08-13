@@ -21,6 +21,8 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	 */
 	private id: string;
 	private _value: string;
+	private _searchDeff: string;
+	private _optionsHTMLArray: Array<string>;
 
 	/**
 	 * Empty constructor.
@@ -43,6 +45,8 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 		// Add control initialization code
 		this.localNotifyOutputChanged = notifyOutputChanged;
 		this.context = context;
+		// @ts-ignore
+		this._searchDeff = context.parameters.searchDeff.raw;
 
 		// @ts-ignore
 		this.id = context.parameters.value.attributes?.LogicalName;
@@ -73,7 +77,6 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
         this.inputElement.setAttribute("list", "list_data");
         this.inputElement.setAttribute("style", "width:100%");
 		this.inputElement.setAttribute("data-list-focus","true");
-		//this.inputElement.addEventListener("change", this.onSelect.bind(this));
 		// Get initial values from field.
         // @ts-ignore
         this.inputElement.value = this.context.parameters.value.formatted;
@@ -89,8 +92,7 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
         var optionsHTML = "";
 
         //@ts-ignore 
-        this.datalistElement.innerHTML = optionsHTML;
-		
+        this.datalistElement.innerHTML = optionsHTML;		
 
 		this.buttonContainer.appendChild(this.button);
 		this.container.appendChild(this.label);
@@ -148,78 +150,59 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
     }
 
 	public onSelect(evt: Event) {
-        //alert("HELLO");
 		var value = $('#input_data').val();
 		//alert(value);
 
-        alert($('#list_data [value="' + value + '"]').data('value'));
+		alert($('#list_data [value="' + value + '"]').data('value'));
 		//@ts-ignore 
 		this._value = $('#list_data [value="' + value + '"]').data('value') as string;
-        this.localNotifyOutputChanged();
+		this.localNotifyOutputChanged();
+		
     }
 
 	public hadleKeyEvents(evt: KeyboardEvent) {
-
-        // Connect to an API and get the suggesstion as user key presses and update dropdown.		
-        //
         if (evt.key === "Enter") {
 			this.searchForData();
-        //     let query = "entities?search-term=" + encodeURIComponent(input) + "&page-size=20";
-        //     let options = {
-        //         host: 'api.business.govt.nz/services/v4/nzbn/',
-        //         path: query,
-        //         headers: {
-        //             'accept': 'application/json',
-        //             'authorization': "Bearer " + this._nzbnToken
-        //         }
-        //     }
-        //     const https = require('https');
-
-        //     https.get(options, (resp: any) => {
-        //         let data = '';
-        //         // A chunk of data has been recieved.
-        //         resp.on('data', (chunk: any) => {
-        //             data += chunk;
-        //         });
-        //         // The whole response has been received. Print out the result.
-        //         resp.on('end', () => {
-        //             var response = JSON.parse(data);
-        //             console.log(response);
-        //             var optionsHTML = "";
-        //             var optionsHTMLArray = new Array();
-        //             for (var i = 0; i < response.items.length; i++) {
-        //                 // Build the values for the AutoComplete Array and Add ID for after select use.
-        //                 var lastTradingName = ((response.items[i].tradingNames.length > 0) ? this.titleCase(response.items[i].tradingNames[0].name) : this.titleCase(response.items[i].entityName));
-
-        //                 optionsHTMLArray.push('<option value="');
-        //                 optionsHTMLArray.push(this.titleCase(response.items[i].entityName) + ". NZBN: " + response.items[i].nzbn);
-        //                 optionsHTMLArray.push('">  Status: ' + response.items[i].entityStatusDescription + ', T/A: ' + lastTradingName + '</option>');
-        //             }
-        //             this.datalistElement.innerHTML = optionsHTMLArray.join("");
-        //             this.localNotifyOutputChanged
-        //         });
-
-        //     }).on("error", (err: { message: string; }) => {
-        //         console.log("Error: " + err.message);
-        //     });
         }
-        // else {
-        //     this.getDetails(this.inputElement.value)
-        // }
     }
 
-	public searchForData() {
-		//this.datalistElement.innerHTML = "";
+	public async searchForData() {
+		debugger;
+		this.datalistElement.innerHTML = "";
 		let input = (this.inputElement.value as any) as string;
-		if(input.length > 0) {
-			//alert(input);
+		if(input.length > 2) {
+			debugger;
+			this._optionsHTMLArray = [];
+			let jsonData = JSON.parse(this._searchDeff);
+			for(let iIndex = 0; iIndex < jsonData.data.length; iIndex++) {
+				let data = JSON.stringify(jsonData.data[iIndex]);
+				await this.seachCRM(input,data);
+			}
 
-			var optionsHTML = "";
-			var optionsHTMLArray = new Array();
+			this.datalistElement.innerHTML = this._optionsHTMLArray.join("");
+			// let fetchXML = "<fetch top='20' ><entity name='contact' ><attribute name='contactid' /><attribute name='fullname' /><attribute name='emailaddress1' /><filter><condition attribute='emailaddress1' operator='like' value='" + input + "%' /></filter></entity></fetch>";
+			// //let test = 'hello'
+			// this.context.webAPI.retrieveMultipleRecords("contact","?fetchXml=" + fetchXML).then(
+			// 	(response: ComponentFramework.WebApi.RetrieveMultipleResponse) => {
+			// 		debugger;
+			// 		for(let iIndex = 0; iIndex < response.entities.length; iIndex++){
+			// 			let contact = response.entities[iIndex];
+
+			// 			let option = '<option data-value="' + contact.contactid +'|contact|' + contact.fullname + '" value="' + contact.fullname + '">' + contact.emailaddress1 + ' Contact: ' + contact.fullname + '</option>'
+			// 			optionsHTMLArray.push(option);
+			// 		}
+
+			// 		this.datalistElement.innerHTML = optionsHTMLArray.join("");
+			// 	},
+			// 	(errorResponse) => {
+			// 		debugger;
+			// 		alert(errorResponse);
+			// 	}
+			// );
 			// for (var i = 0; i < response.items.length; i++) {
 			// 	// Build the values for the AutoComplete Array and Add ID for after select use.
 			// 	var lastTradingName = ((response.items[i].tradingNames.length > 0) ? this.titleCase(response.items[i].tradingNames[0].name) : this.titleCase(response.items[i].entityName));
-			let strText = "ONE";
+			/* let strText = "ONE";
 			let option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
 			//alert(option);
 			optionsHTMLArray.push(option);
@@ -235,12 +218,47 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 			optionsHTMLArray.push(option);
 
 			strText = "FOUR";
-			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>'
+			option = '<option data-value="' + strText +'|contact" value="' + strText + '">Other: ' + strText + ', T/A: ' + strText + '</option>' */
 			//alert(option);
-			optionsHTMLArray.push(option);
+			//optionsHTMLArray.push(option);
 			//}
 			//alert(optionsHTMLArray.join(""));
-			this.datalistElement.innerHTML = optionsHTMLArray.join("");			
+						
 		}
-	}
+	} // public searchForData()
+
+	public async seachCRM(input: string, entity: string) {
+		
+		let entityDetails = JSON.parse(entity);
+
+		let fetchXML = "<fetch top='20' ><entity name='" + entityDetails.entity + "' ><attribute name='" + entityDetails.idfield + "' /><attribute name='" + entityDetails.searchfield + "' />";
+		for(let iIndex = 0; iIndex < entityDetails.displayfields.length; iIndex++) {
+			fetchXML += "<attribute name='" + entityDetails.displayfields[iIndex] + "' />";
+		}
+		fetchXML += "<filter><condition attribute='" + entityDetails.searchfield + "' operator='like' value='" + input + "%' /></filter></entity></fetch>";
+
+		//let test = 'hello'
+		await this.context.webAPI.retrieveMultipleRecords(entityDetails.entity,"?fetchXml=" + fetchXML).then(
+			(response: ComponentFramework.WebApi.RetrieveMultipleResponse) => {
+				debugger;
+				for(let iIndex = 0; iIndex < response.entities.length; iIndex++){
+					let data = response.entities[iIndex];
+
+					let option = '<option data-value="' + data[entityDetails.idfield] +'|' + entityDetails.entity + '|' + data[entityDetails.entityvaluename] + '" value="' + data[entityDetails.searchfield] + '">';
+
+					option += entityDetails.resultdisplay + " : " + data[entityDetails.entityvaluename];
+					for(let iIndex = 0; iIndex < entityDetails.displayfields.length; iIndex++) {
+						option += ', ' + data[entityDetails.displayfields[iIndex]];						
+					}
+					option += '</option>';
+
+					this._optionsHTMLArray.push(option);
+				}				
+			},
+			(errorResponse) => {
+				debugger;
+				alert(errorResponse);
+			}
+		);
+	} // public async seachCRM(entity: string)
 }

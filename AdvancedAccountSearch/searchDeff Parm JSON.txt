@@ -1,0 +1,7 @@
+{ 
+    "data": 
+    [ 
+        { "entity": "contact", "idfield": "contactid", "entityvaluename": "fullname", "resultdisplay": "Ind Cust", "searchfield": "emailaddress1", "displayfields": [ "fullname" ] },
+        { "entity": "account", "idfield": "accountid", "entityvaluename": "name", "resultdisplay": "Bus Cust", "searchfield": "accountnumber", "displayfields": [ "name" ] } 
+    ] 
+}

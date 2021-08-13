@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest>
-  <control namespace="Nedbank" constructor="AdvancedAccountSearch" version="2.2.1" display-name-key="AdvancedAccountSearch" description-key="AdvancedAccountSearch description" control-type="standard">
+  <control namespace="Nedbank" constructor="AdvancedAccountSearch" version="2.2.13" display-name-key="AdvancedAccountSearch" description-key="AdvancedAccountSearch description" control-type="standard">
     <!--external-service-usage node declares whether this 3rd party PCF control is using external service or not, if yes, this control will be considered as premium and please also add the external domain it is using.
     If it is not using any external service, please set the enabled="false" and DO NOT add any domain below. The "enabled" will be false by default.
     Example1:
@@ -20,7 +20,7 @@
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
     <property name="value" display-name-key="Auto Complete Field?" description-key="Select the field that you want this auto complete fuction to be bound too." of-type="SingleLine.Text" usage="bound" required="true" />
     <property name="searchText" display-name-key="SearchText_Display_Key" description-key="SearchText_Desc_Key" of-type="SingleLine.Text" usage="bound" required="true" />
-    <property name="searchDeff" display-name-key="SearchDeff_Display_Key" description-key="SearchDeff_Desc_key" of-type="SingleLine.Text" usage="input" required="false" />
+    <property name="searchDeff" display-name-key="SearchDeff_Display_Key" description-key="SearchDeff_Desc_key" usage="input" required="false" of-type-group="searchDeffGRP" />
     <!-- 
       Property node's of-type attribute can be of-type-group attribute. 
       Example:
@@ -52,5 +52,10 @@
       <uses-feature name="Utility" required="true" />
       <uses-feature name="WebAPI" required="true" />
     </feature-usage>
+    <type-group name="searchDeffGRP">
+      <type>Multiple</type>
+      <type>SingleLine.Text</type>
+      <type>SingleLine.TextArea</type>
+    </type-group>
   </control>
 </manifest>
