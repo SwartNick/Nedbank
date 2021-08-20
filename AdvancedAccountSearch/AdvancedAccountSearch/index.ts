@@ -1,6 +1,7 @@
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 import * as $ from "jquery";
 import * as Bootstrap from "bootstrap";
+import { runInThisContext } from "vm";
 
 export class AdvancedAccountSearch implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
@@ -42,6 +43,7 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 	 */
 	public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void
 	{
+		debugger;
 		// Add control initialization code
 		this.localNotifyOutputChanged = notifyOutputChanged;
 		this.context = context;
@@ -73,9 +75,9 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
         this.inputElement.name = "autocomplete_data";
         this.inputElement.placeholder = "Search using text...";
         this.inputElement.autocomplete = "off";
-        this.inputElement.className = "ms-SearchBox-field"
+        this.inputElement.className = "ms-SearchBox-field";
         this.inputElement.setAttribute("list", "list_data");
-        this.inputElement.setAttribute("style", "width:100%");
+        this.inputElement.setAttribute("style", "width:98%");
 		this.inputElement.setAttribute("data-list-focus","true");
 		// Get initial values from field.
         // @ts-ignore
@@ -86,6 +88,7 @@ export class AdvancedAccountSearch implements ComponentFramework.StandardControl
 
 		// creating HTML elements for data list 
         this.datalistElement = document.createElement("datalist");
+		this.datalistElement.setAttribute("style","width:200%");
 		this.datalistElement.addEventListener("selectionchange", this.onSelect.bind(this));
         this.datalistElement.id = "list_data";
 

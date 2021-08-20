@@ -72,13 +72,13 @@ input[name="autocomplete_value_logical_name"] {
   width: 350px; 
 }*/
 
-input[name="autocomplete_value_logical_name"] {
+/* input[name="autocomplete_value_logical_name"] {
   background-image: url();
   background-size: 15px 20px;
   background-position: right;
   padding: 10px;
   background-repeat: no-repeat;
-}
+} */
 /*
 input::-webkit-calendar-picker-indicator {
   /*   display: none; 

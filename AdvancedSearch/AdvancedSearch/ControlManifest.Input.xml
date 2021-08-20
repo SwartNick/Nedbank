@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest>
-  <control namespace="Nedbank" constructor="AdvancedAccountSearch" version="2.2.25" display-name-key="AdvancedAccountSearch" description-key="AdvancedAccountSearch description" control-type="standard">
+  <control namespace="Nedbank" constructor="AdvancedSearch" version="0.0.2" display-name-key="AdvancedSearch" description-key="AdvancedSearch description" control-type="standard">
     <!--external-service-usage node declares whether this 3rd party PCF control is using external service or not, if yes, this control will be considered as premium and please also add the external domain it is using.
     If it is not using any external service, please set the enabled="false" and DO NOT add any domain below. The "enabled" will be false by default.
     Example1:
@@ -18,9 +18,7 @@
       -->
     </external-service-usage>
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
-    <property name="value" display-name-key="Auto Complete Field?" description-key="Select the field that you want this auto complete fuction to be bound too." of-type="SingleLine.Text" usage="bound" required="true" />
-    <property name="searchText" display-name-key="SearchText_Display_Key" description-key="SearchText_Desc_Key" of-type="SingleLine.Text" usage="bound" required="true" />
-    <property name="searchDeff" display-name-key="SearchDeff_Display_Key" description-key="SearchDeff_Desc_key" usage="input" required="false" of-type-group="searchDeffGRP" />
+    <property name="textValue" display-name-key="textValue_Display_Key" description-key="textValuey_Desc_Key" usage="bound" required="true" of-type-group="main" />
     <!-- 
       Property node's of-type attribute can be of-type-group attribute. 
       Example:
@@ -34,29 +32,31 @@
     -->
     <resources>
       <code path="index.ts" order="1" />
-      <css path="css/fabric.min.css" order="1" />
-      <css path="css/fabric.components.min.css" order="1" />
-      <css path="css/style.css" order="1" />
-      <resx path="strings/WebAPIControl.1033.resx" version="1.0.0" />
       <!-- UNCOMMENT TO ADD MORE RESOURCES
-      <css path="css/AdvancedAccountSearch.css" order="1" />
-      <resx path="strings/AdvancedAccountSearch.1033.resx" version="1.0.0" />
+      <css path="css/AdvancedSearch.css" order="1" />
+      <resx path="strings/AdvancedSearch.1033.resx" version="1.0.0" />
       -->
     </resources>
+    <!-- UNCOMMENT TO ENABLE THE SPECIFIED API
     <feature-usage>
-      <!--<uses-feature name="Device.captureAudio" required="true" />
+      <uses-feature name="Device.captureAudio" required="true" />
       <uses-feature name="Device.captureImage" required="true" />
       <uses-feature name="Device.captureVideo" required="true" />
       <uses-feature name="Device.getBarcodeValue" required="true" />
       <uses-feature name="Device.getCurrentPosition" required="true" />
-      <uses-feature name="Device.pickFile" required="true" />-->
+      <uses-feature name="Device.pickFile" required="true" />
       <uses-feature name="Utility" required="true" />
       <uses-feature name="WebAPI" required="true" />
     </feature-usage>
-    <type-group name="searchDeffGRP">
-      <type>Multiple</type>
+    -->
+    <type-group name="main">
       <type>SingleLine.Text</type>
       <type>SingleLine.TextArea</type>
+      <type>Multiple</type>
     </type-group>
+    <feature-usage>
+      <uses-feature name="Utility" required="true" />
+      <uses-feature name="WebAPI" required="true" />
+    </feature-usage>
   </control>
 </manifest>
